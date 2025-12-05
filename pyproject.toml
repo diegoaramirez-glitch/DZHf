@@ -1,0 +1,12 @@
+[project]
+name = "dzhf"
+version = "0.1.0"
+description = "Uso de dataciones UPb y datos de LuHf de Panamá"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "detritalpy>=1.4.8",
+    "matplotlib>=3.10.7",
+    "numpy>=2.2.6",
+    "pandas>=2.3.3",
+]

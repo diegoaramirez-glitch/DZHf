@@ -1,0 +1,1 @@
+Este proyecto incluye el análisis de los resultados publicados en Ramirez et al (2016) usando herramientas de python 
