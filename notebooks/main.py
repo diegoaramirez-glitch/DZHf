@@ -86,6 +86,19 @@ def _(Hf_CHUR, Lu_CHUR, df, lam_Lu, np):
     _numerador = Hf176_Hf177 - Lu176_Hf177*decaimiento
     _denominador = Hf_CHUR - Lu_CHUR*decaimiento
     df["ehf"] = 10_000 * ((_numerador/_denominador)-1)
+
+    #Calcular CHUR_t a determinada edad
+    CHUR_t = Hf_CHUR - Lu_CHUR * decaimiento
+
+    #Calcular 2s para los valores de eHf
+    two_sigma = 2*(pow(10, 4) * (df["1 s error.1"] / CHUR_t))
+    df["2s"] = two_sigma
+
+    df
+
+    return Hf176_Hf177, decaimiento
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
