@@ -80,6 +80,9 @@ def _(Hf_CHUR, Lu_CHUR, df, lam_Lu, np):
     # calcular eHfi y propagar errores 
 
     # Columnas de interés
+    t = df["t(Ga)"] 
+    Lu176_Hf177 = df["176Lu_177Hf"] 
+    Hf176_Hf177 = df["176Hf_177Hf"]
 
     # Calcular eHf
     decaimiento = np.exp( lam_Lu * t ) - 1
