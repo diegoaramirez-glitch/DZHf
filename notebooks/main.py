@@ -61,7 +61,7 @@ def _(mo):
 @app.cell
 def _():
     # Valores constantes de Hf y Lu en Depleted Mantle y CHUR
-    # Vervoort et al. 2018 values
+    # Vervoort et al. 2018
     Hf_DM = 0.283225
     Lu_DM = 0.0383
 
@@ -77,14 +77,14 @@ def _():
 
 @app.cell
 def _(Hf_CHUR, Lu_CHUR, df, df_good, lam_Lu, np):
-    # calcular eHfi 
+    # calcular eHfi y propagar errores 
 
-    # Columns of interest
     t = df_good["t(Ga)"] 
     Lu176_Hf177 = df_good["176Lu_177Hf"] 
     Hf176_Hf177 = df_good["176Hf_177Hf"]
+    # Columnas de interés
 
-    # Calculation of eHf
+    # Calcular eHf
     decaimiento = np.exp( lam_Lu * t ) - 1
     _numerador = Hf176_Hf177 - Lu176_Hf177*decaimiento
     _denominador = Hf_CHUR - Lu_CHUR*decaimiento
@@ -160,7 +160,7 @@ def _(df_with_ehf, px):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    # Other Thing
+    #Two‑stage crustal model age (Para circones antiguos)
     """)
     return
 
