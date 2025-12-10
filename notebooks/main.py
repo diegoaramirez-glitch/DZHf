@@ -129,16 +129,6 @@ def _(mo):
 
 
 @app.cell
-def _(df_with_ehf, px):
-    colores = { # Color scheme for different samples
-      "060065":"red",
-      "060067":"green",
-      "060072":"blue",
-      "070242":"black",
-      "300351":"yellow",
-      "300339":"purple",
-      "300334":"pink",
-    }
     linea_recta_x = (0.03, .08)
     linea_recta_y = (-10, 10)
 def _(df_good, px):
