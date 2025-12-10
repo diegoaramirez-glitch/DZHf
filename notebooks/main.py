@@ -85,7 +85,7 @@ def _(Hf_CHUR, Lu_CHUR, df, lam_Lu, np):
     decaimiento = np.exp( lam_Lu * t ) - 1
     _numerador = Hf176_Hf177 - Lu176_Hf177*decaimiento
     _denominador = Hf_CHUR - Lu_CHUR*decaimiento
-    _ehf = 10_000 * ((_numerador/_denominador)-1)
+    df["ehf"] = 10_000 * ((_numerador/_denominador)-1)
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
