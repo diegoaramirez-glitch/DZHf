@@ -33,6 +33,7 @@ def _(mo):
 
 @app.cell
 def _(pd):
+    #Crear dataframe 
     df = pd.read_excel(r'data\Hf.xlsx').rename(columns = {
         "176Hf/177Hf":"176Hf_177Hf",
         "176Lu/177Hf":"176Lu_177Hf",
@@ -40,7 +41,8 @@ def _(pd):
 
     })
 
-    df[["sampleid", "number"]] = df['Sample'].str.split('_', expand=True, n=1)
+    #Ajuste de nombre de columna Sample para cálculos y gráficos
+    df[["sampleid", "number"]] = df['Sample'].str.split('_', expand=True, n=1) 
 
     return (df,)
 
