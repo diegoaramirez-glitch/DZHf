@@ -44,6 +44,9 @@ def _(pd):
     #Ajuste de nombre de columna Sample para cálculos y gráficos
     df[["sampleid", "number"]] = df['Sample'].str.split('_', expand=True, n=1) 
 
+    #Conversión de unidades de Ga a Ma
+    df["t(Ma)"] = df["t(Ga)"]*1000 
+    df
     return (df,)
 
 
