@@ -94,7 +94,6 @@ def _(mo):
     return
 
 
-    df_with_ehf=df.assign(ehf=_ehf)
 @app.cell
 def _(df):
     #Calcular cuatiles q1 y q3 de las edades
