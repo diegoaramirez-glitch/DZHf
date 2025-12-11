@@ -132,7 +132,7 @@ def _(df):
     df_good = df[
         mask := (
             df["t(Ga)"].between(q1 - IRQ, q3 + IRQ)
-            & (df["2s"] < 2.5)
+            & (df["2s"] < 2.0)
         )
     ]
     df_bad = df[-mask] #Lista de outliers
@@ -186,14 +186,6 @@ def _(mo):
 
 @app.cell
 def _(chur_xs, chur_ys, df_good, dm_xs, dm_ys, go, px):
-    #Coordenadas de la línea de DM
-    linea_DM_x = (0, 4500)
-    linea_DM_y = (18, 0)
-
-    #Coordenadas de la línea de CHUR
-    linea_CHUR_x = (0, 4500)
-    linea_CHUR_y = (0, 0)
-
     #Parámetros de la figura
     fig = px.scatter(
         df_good,
@@ -204,29 +196,6 @@ def _(chur_xs, chur_ys, df_good, dm_xs, dm_ys, go, px):
         marginal_x="rug",
         marginal_y="box",
         title="eHf vs Age (Ma)")
-
-    fig.add_trace(
-         go.Scatter(
-             x=dm_xs,
-             y=dm_ys,
-             name="DM",
-             line=dict(color="Crimson"))
-    )
-    fig.add_scatter(name="CHUR", x=chur_xs, y=chur_ys)
-
-    fig.add_annotation(
-        text="Depleted Mantle",
-        x=dm_xs[0]+3,
-        y=dm_ys[0]+1,
-        showarrow=False
-    )
-
-    fig.add_annotation(
-        text="Chondritic uniform reservoir",
-        x=chur_xs[0]+5,
-        y=chur_ys[0]-1,
-        showarrow=False
-    )
 
     #Rectangulos de rocas fuentes
     #Pluton de Parita
@@ -288,7 +257,74 @@ def _(chur_xs, chur_ys, df_good, dm_xs, dm_ys, go, px):
             name="Pluton de Cerro Montuoso"
         )
     )
+
+    #Lineas DM y CHUR
+    fig.add_trace(
+         go.Scatter(
+             x=dm_xs,
+             y=dm_ys,
+             name="DM",
+             line=dict(color="Crimson"))
+    )
+    fig.add_scatter(name="CHUR", x=chur_xs, y=chur_ys)
+
+    #Texto lineas DM y CHUR
+    fig.add_annotation(
+        text="Depleted Mantle",
+        x=dm_xs[0]+3,
+        y=dm_ys[0]+1,
+        showarrow=False
+    )
+
+    fig.add_annotation(
+        text="Chondritic uniform reservoir",
+        x=chur_xs[0]+5,
+        y=chur_ys[0]-1,
+        showarrow=False
+    )
+
+    #Fuente de los circones
+    fig.add_trace(
+        go.Scatter(
+            x=[35, 70, 70, 35, 35],
+            y=[5, 5, 15, 15, 5],
+            line=dict(color="black", width=0),
+            fill="toself",
+            fillcolor="rgba(160, 160, 160, 0.2)",
+            name="Juvenil"
+        )
+    )
+
+    fig.add_trace(
+        go.Scatter(
+            x=[35, 70, 70, 35, 35],
+            y=[-20, -20, -5, -5, -20],
+            line=dict(color="black", width=0),
+            fill="toself",
+            fillcolor="rgba(160, 160, 160, 0.2)",
+            name="Corteza reciclada"
+        )
+    )
     fig
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    #Resultado
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Rangos de valores iniciales de εHf (solamente para datos con errores 2sigma < 2.0):
+    Circones magmáticos:
+    Plutón de Cerro Montuoso (060072):  (+4.9 - +9.0)
+    Plutón de Parita (060065 - 060067): (+4.3 - +11.0)
+    """)
     return
 
 
