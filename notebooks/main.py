@@ -94,7 +94,7 @@ def _(Hf_CHUR, Lu_CHUR, df, lam_Lu, np):
     CHUR_t = Hf_CHUR - Lu_CHUR * decaimiento #Calcular CHUR_t a determinada edad
     df["ehf"] = 10_000 * (_numerador / CHUR_t - 1)
 
-    two_sigma = 2*(pow(10, 4) * (df["1 s error.1"] / CHUR_t))
+    two_sigma = 2*(pow(10, 4) * (df["1s_error.1"] / CHUR_t))
     df["2s"] = two_sigma
 
     df
