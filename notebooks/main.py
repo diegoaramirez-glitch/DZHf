@@ -75,7 +75,7 @@ def _():
     Hf_CHUR = 0.282772
     Lu_CHUR = 0.0332
 
-    lam_Lu = 1.867e-5 # My-1
+    lam_Lu = 1.867e-11 # yr^-1
 
     Lu_crust = 0.015
     return Hf_CHUR, Hf_DM, Lu_CHUR, Lu_DM, Lu_crust, lam_Lu
@@ -86,19 +86,15 @@ def _(Hf_CHUR, Lu_CHUR, df, lam_Lu, np):
     # calcular eHfi y propagar errores 
 
     # Columnas de interés
-    t = df["t(Ga)"] 
+    t = df["t(Ga)"] * 1e9           #t debe ser escrita en años
     Lu176_Hf177 = df["176Lu_177Hf"] 
     Hf176_Hf177 = df["176Hf_177Hf"]
 
     # Calcular eHf
     decaimiento = np.exp( lam_Lu * t ) - 1
-    _numerador = Hf176_Hf177 - Lu176_Hf177*decaimiento
-    _denominador = Hf_CHUR - Lu_CHUR*decaimiento
-    df["ehf"] = 10_000 * ((_numerador/_denominador)-1)
-
-
-    #Calcular 2s para los valores de eHf
+    _numerador = Hf176_Hf177 - Lu176_Hf177 * decaimiento
     CHUR_t = Hf_CHUR - Lu_CHUR * decaimiento #Calcular CHUR_t a determinada edad
+    df["ehf"] = 10_000 * (_numerador / CHUR_t - 1)
 
     two_sigma = 2*(pow(10, 4) * (df["1 s error.1"] / CHUR_t))
     df["2s"] = two_sigma
