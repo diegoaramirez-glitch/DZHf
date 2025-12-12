@@ -33,27 +33,20 @@ def _(mo):
 
 @app.cell
 def _():
-    DATA_LOCATION = "https://diegoaramirez-glitch.github.io/DZHf/public/data/Hf.xlsx"
+    DATA_LOCATION = "https://diegoaramirez-glitch.github.io/DZHf/public/data/Hf.csv"
     return (DATA_LOCATION,)
 
 
 @app.cell
 def _(DATA_LOCATION, pd):
     #Crear dataframe 
-    df = pd.read_excel(DATA_LOCATION).rename(columns = {
-        "176Hf/177Hf":"176Hf_177Hf",
-        "176Lu/177Hf":"176Lu_177Hf",
-        "176Hf/177Hf(t)": "176Hf_177Hf(t)",
-
-    })
+    df = pd.read_csv(DATA_LOCATION, sep= ";", decimal=",", thousands=".")
 
     #Ajuste de nombre de columna Sample para cálculos y gráficos
     df[["sampleid", "number"]] = df['Sample'].str.split('_', expand=True, n=1) 
 
     #Conversión de unidades de Ga a Ma
     df["t(Ma)"] = df["t(Ga)"]*1000
-
-    #Agregar columna de tipo de roca de la muestra
 
     df
     return (df,)
