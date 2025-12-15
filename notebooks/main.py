@@ -7,7 +7,7 @@ app = marimo.App(width="medium", layout_file="layouts/main.grid.json")
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    #Eocene-Miocene source-to-sink dynamics in Panama using U-Pb-Hf in zircons
+    #Eocene to Oligocene source-to-sink dynamics in Panama using U-Pb-Hf in zircons
     """)
     return
 
