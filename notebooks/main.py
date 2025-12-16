@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.18.3"
+__generated_with = "0.18.4"
 app = marimo.App(width="medium", layout_file="layouts/main.grid.json")
 
 
@@ -48,7 +48,7 @@ def _():
 
 @app.cell
 def _(DATA_LOCATION, pd):
-    #Crear dataframe 
+    #Create dataframe 
     df = pd.read_csv(DATA_LOCATION, sep= ";", decimal=",", thousands=".").rename(columns={"1s_error.1":"1s_error-1"})
 
     #Ajuste de nombre de columna Sample para cálculos y gráficos
@@ -78,7 +78,7 @@ def _(mo):
 
 @app.cell
 def _():
-    # Valores constantes de Hf y Lu en Depleted Mantle y CHUR
+    # Lu and Hf constants
     # Vervoort et al. 2018
     Hf_DM = 0.283225
     Lu_DM = 0.0383
@@ -97,20 +97,20 @@ def _():
 
 @app.cell
 def _(Hf_CHUR, Lu_CHUR, df, lam_Lu, np):
-    # calcular eHfi y propagar errores 
+    # calculate eHfi and propagate errors 
 
     # Columnas de interés
-    t = df["t(Ga)"] * 1e9           #t debe ser escrita en años
+    t = df["t(Ga)"] * 1e9           #t (in years)
     Lu176_Hf177 = df["176Lu_177Hf"] 
     Hf176_Hf177 = df["176Hf_177Hf"]
 
-    # Calcular eHf
+    # Calculate eHfi
     decaimiento = np.exp( lam_Lu * t ) - 1
     _numerador = Hf176_Hf177 - Lu176_Hf177 * decaimiento
-    CHUR_t = Hf_CHUR - Lu_CHUR * decaimiento #Calcular CHUR_t en tiempo t
+    CHUR_t = Hf_CHUR - Lu_CHUR * decaimiento 
     df["ehf"] = 10_000 * (_numerador / CHUR_t - 1)
 
-    #Propagar errores a 2s
+    #Propagate errors at 2s
     two_sigma = 2*(pow(10, 4) * (df["1s_error-1"] / CHUR_t))
     df["2s"] = two_sigma
     return Hf176_Hf177, decaimiento
@@ -126,19 +126,19 @@ def _(mo):
 
 @app.cell
 def _(df):
-    #Calcular cuatiles q1 y q3 de las edades
+    #Calculate q1 and q3 from age data 
     q1, q3 = df["t(Ga)"].quantile([.05, .95])
     IRQ = q3 - q1
     print(q1, q3)
 
-    #Separar los datos outliers y errores muy altos
+    #Separate outliers and high uncertainty data
     df_good = df[
         mask := (
             df["t(Ga)"].between(q1 - IRQ, q3 + IRQ)
             & (df["2s"] < 2.0)
         )
     ]
-    df_bad = df[-mask] #Lista de outliers
+    df_bad = df[-mask] #Outliers dataframe
 
     print(f"Size original: {df.shape}")
     print(f"Size filtered: {df_good.shape}")
@@ -185,7 +185,7 @@ def _(mo):
 
 @app.cell
 def _(chur_xs, chur_ys, df_good, dm_xs, dm_ys, go, px):
-    #Parámetros de la figura
+    #Create scatter figure
     fig = px.scatter(
         df_good,
         x="t(Ma)",
@@ -219,8 +219,8 @@ def _(chur_xs, chur_ys, df_good, dm_xs, dm_ys, go, px):
         )
     )
 
-    #Rectangulos de rocas fuentes
-    #Pluton de Parita
+    #Posible igneous sources
+    #Parita pluton
     fig.add_trace(
         go.Scatter(
             x=[36, 37, 37, 36, 36],
@@ -228,11 +228,11 @@ def _(chur_xs, chur_ys, df_good, dm_xs, dm_ys, go, px):
             line=dict(color="black", width=0),
             fill="toself",
             fillcolor="rgba(255, 0, 0, 0.1)",
-            name="Pluton de Parita"
+            name="Parita pluton"
         )
     )
 
-    #Pluton de Mamoní
+    #Mamoní pluton
     fig.add_trace(
         go.Scatter(
             x=[39, 49, 49, 39, 39],
@@ -240,11 +240,11 @@ def _(chur_xs, chur_ys, df_good, dm_xs, dm_ys, go, px):
             line=dict(color="black", width=0),
             fill="toself",
             fillcolor="rgba(150, 0, 200, 0.2)",
-            name="Pluton de Mamoni"
+            name="Mamoni pluton"
         )
     )
 
-    #Pluton de Valle Rico
+    #Valle Rico pluton
     fig.add_trace(
         go.Scatter(
             x=[48, 49, 49, 48, 48],
@@ -252,11 +252,11 @@ def _(chur_xs, chur_ys, df_good, dm_xs, dm_ys, go, px):
             line=dict(color="black", width=0),
             fill="toself",
             fillcolor="rgba(0, 200, 0, 0.25)",
-            name="Pluton de Valle Rico"
+            name="Valle Rico pluton"
         )
     )
 
-    #Pluton de Cerro Azul
+    #Cerro Azul pluton
     fig.add_trace(
         go.Scatter(
             x=[54, 59, 59, 54, 54],
@@ -264,11 +264,11 @@ def _(chur_xs, chur_ys, df_good, dm_xs, dm_ys, go, px):
             line=dict(color="black", width=0),
             fill="toself",
             fillcolor="rgba(255, 140, 0, 0.3)",
-            name="Pluton de Cerro Azul"
+            name="Cerro Azul pluton"
         )
     )
 
-    #Pluton de Cerro Montuoso
+    #Cerro Montuoso pluton
     fig.add_trace(
         go.Scatter(
             x=[66, 67, 67, 66, 66],
@@ -276,11 +276,11 @@ def _(chur_xs, chur_ys, df_good, dm_xs, dm_ys, go, px):
             line=dict(color="black", width=0),
             fill="toself",
             fillcolor="rgba(0, 102, 255, 0.15)",
-            name="Pluton de Cerro Montuoso"
+            name="Cerro Montuoso pluton"
         )
     )
 
-    #Lineas DM y CHUR
+    #DM and CHUR lines
     fig.add_trace(
          go.Scatter(
              x=dm_xs,
@@ -290,7 +290,7 @@ def _(chur_xs, chur_ys, df_good, dm_xs, dm_ys, go, px):
     )
     fig.add_scatter(name="CHUR (Chondritic uniform reservoir)", x=chur_xs, y=chur_ys)
 
-    #Texto lineas DM y CHUR
+    #DM and CHUR annotations
     fig.add_annotation(
         text="DM",
         x=dm_xs[0]+15,
@@ -305,7 +305,7 @@ def _(chur_xs, chur_ys, df_good, dm_xs, dm_ys, go, px):
         showarrow=False
     )
 
-    #Fuente de los circones
+    #Zircon sources
     fig.add_trace(
         go.Scatter(
             x=[35, 70, 70, 35, 35],
@@ -336,7 +336,7 @@ def _(chur_xs, chur_ys, df_good, dm_xs, dm_ys, go, px):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    ##Data analysis
+    ## Hf data results
     """)
     return
 
@@ -344,19 +344,17 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    Rangos de valores iniciales de εHf (solamente para valores con 2sigma < 2.0):
+    Initial εHf value ranges (only for values with 2sigma < 2.0):
 
-    - Circones magmáticos:
-        Plutón de Cerro Montuoso (060072):  (+4.9 a +9.0)
-        Plutón de Parita (060065 - 060067): (+4.3 a +11.0)
+    - Magmatic zircons:
+          Cerro Montuoso Pluton (060072): (+4.9 to +9.0) Parita Pluton (060065 - 060067): (+4.3 to +11.0)
+    - Detrital zircons:
+          Diablo River Sand (070242): (+3.7 to +13.1), with an outlier of -3.2
+          Cobachón Formation (300351): (+2.6 to +11.6)
+          Gatuncillo Formation (300339): (+7.1 to +15.4)
+          Mamoni River Sand (300334): (+8.2 to 14.0)
 
-    - Circones detriticos:
-        Arena de rio Diablo (070242):       (+3.7 a +13.1), presenta un outlier de -3.2
-        Formación Cobachón (300351):        (+2.6 a +11.6)
-        Formación Gatuncillo (300339):      (+7.1 a +15.4)
-        Arena de rio Mamoni (300334):       (+8.2 a 14.0)
-
-    Los resultados obtenidos indican que el sistema magmático formado durante ca. 70-35 Ma se caracteriza por una firma juvenil, derivada de magmatismo mantélico, sin aporte de corteza continental antigua.
+    The results obtained indicate that the magmatic system formed during ca. 70-35 Ma is characterized by a juvenile signature, derived from mantle magmatism, without input from ancient continental crust.
     """)
     return
 

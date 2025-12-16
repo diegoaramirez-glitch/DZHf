@@ -5,6 +5,7 @@ description = "Uso de dataciones UPb y datos de LuHf de Panamá"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    "detritalpy",
     "marimo>=0.18.3",
     "numpy>=2.2.6",
     "openpyxl>=3.1.5",
@@ -12,3 +13,6 @@ dependencies = [
     "plotly>=6.5.0",
     "quak>=0.3.3",
 ]
+
+[tool.uv.sources]
+detritalpy = { path = "../detritalPy" , editable = true }
