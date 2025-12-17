@@ -379,5 +379,19 @@ def _(Hf176_Hf177, Hf_DM, Lu_DM, Lu_crust, decaimiento, lam_Lu, np):
     return
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    #Detrital zircons analysis
+    """)
+    return
+
+
+@app.cell
+def _(pd):
+    df2 = pd.read_excel("")
+    return
+
+
 if __name__ == "__main__":
     app.run()
