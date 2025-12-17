@@ -387,9 +387,85 @@ def _(mo):
 
 
 @app.cell
-def _(DATA_LOCATION, pd):
+def _():
+    DATA_LOCATION2 = "https://diegoram7.github.io/DZHf/public/data/Ramirez_etal_2016b.csv"
+    return (DATA_LOCATION2,)
+
+
+@app.cell
+def _(DATA_LOCATION2, pd):
     #Create dataframe2 
-    df2 = pd.read_excel(DATA_LOCATION, sheet_name="ZrUPb")
+    df2 = pd.read_csv(DATA_LOCATION2, sep= ";", decimal=",", thousands=".")
+
+    #Convert Age_err to 1s
+    df2["BestAge_err_1s"] = df2["BestAge_err"]/2
+
+    return (df2,)
+
+
+@app.cell
+def _(df2, mo, quak):
+    widget2 = mo.ui.anywidget(quak.Widget(df2))
+    widget2
+    return
+
+
+@app.cell
+def _(np):
+    #Calculate KDE
+    def kernel_density_plot(x, best_age):
+
+        N = len(best_age)
+        kde = np.zeros_like(x, dtype=float) # Creates a variable pdp with equal spaces as the defined age grid x
+        s = np.std(best_age, ddof=1)
+        #h = 1.06 * s * N ** -0.2
+        h = 0.5
+    
+        
+        for i, age in enumerate(best_age):
+            _exponente = np.exp(-0.5 * ((x - age)/h)**2) # un escalar derivado de una fila
+            _fracion = 1 / ((N * h) * np.sqrt(2*np.pi)) # un escalar derviado para una fila de una fila
+            kde += np.nan_to_num(_fracion * _exponente, nan=0.0)
+        return kde 
+
+    # pdp += (1 / (err * np.sqrt(2 * np.pi))) * _exponente
+    return (kernel_density_plot,)
+
+
+@app.cell
+def _(df2, kernel_density_plot, np):
+    # Define age grid
+    x = np.linspace(df2["BestAge"].min() - 50, df2["BestAge"].max() + 50, 2000)
+
+    # Compute PDP
+    kde = kernel_density_plot(x, df2["BestAge"])
+
+    kde
+    return kde, x
+
+
+@app.cell
+def _(go, kde, x):
+
+    fig2 = go.Figure()
+
+    fig2.add_trace(
+        go.Scatter(
+            x=x,
+            y=kde,
+            mode="lines",
+            name="PDP",
+            line=dict(width=2)
+        )
+    )
+
+    fig2.update_layout(
+        xaxis_title="Age (Ma)",
+        yaxis_title="Probability Density",
+        template="simple_white"
+    )
+
+    fig2
     return
 
 
